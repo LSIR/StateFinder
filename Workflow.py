@@ -3,13 +3,17 @@ this file define some standard workflow,
  combining functions from the other files
 """
 
-import Processing as pr
-import DataSource as ds
-import Converter as cv
-import LookupTable as lt
-import Symbolizer as sbz
+import StateFinder.Processing as pr
+import Utils.DataSource as ds
+import Utils.Converter as cv
+import StateFinder.LookupTable as lt
+import StateFinder.Symbolizer as sbz
+import Utils.FileUtils as fu
+
 from subprocess import call
 import pickle
+
+
 
 
 def convert_median_filter(src, dst, win):
@@ -21,6 +25,17 @@ def convert_median_filter(src, dst, win):
     dat.load()
     dat.data = pmf.batch_process(dat.data)
     dat.save()
+
+def split_file_by(filename, folder, offset=0, duration=86400):
+    """
+    split the file for applying the forecasting algorithm
+    """
+    src = ds.FileDataSource(filename, None)
+    cut = fu.PeriodicCutProcess(int(duration), int(offset))
+    src.load()
+    src.data = cut.batch_process(src.data)
+    spl = fu.Splitter(src.data)
+    spl.splitFiles(folder, int(duration), int(offset))
 
 def convert_rle(src, dst):
     """
@@ -73,8 +88,19 @@ def convert_from_csv(src, dst):
     fun = lambda tab: int(float(tab[0]))
     cfc.convert(src, dst, fun)
 
+def get_distance(file0, file1, rate):
+    dat0 = ds.FileDataSource(file0, None)
+    dat1 = ds.FileDataSource(file1, None)
+    dat0.load()
+    dat1.load()
+    gdt = fu.Get_Distance()
+    dist = gdt.levenshtein(dat0.data, dat1.data, int(rate))
+    print "total-distance (d) = %d"%(dist[0])
+    print "total-time-length (l) = %d"%(dist[1])
+    print "normalized-distance (d/l) = %f"%(dist[0]*1.0/dist[1])
 
-def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, ethreshold, minpts, mindist):
+
+def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, ethreshold, mindist):
     """
     batch process using standard symbolization
     """
@@ -108,7 +134,7 @@ def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, et
     lkf.close()
 
 
-def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid, wnbr, ememory, ethreshold, sigma, mindist):
+def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid, wnbr, ememory, ethreshold, mindist):
     """
     batch process using spclust symbolization
     """
