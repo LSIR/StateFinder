@@ -1,0 +1,17 @@
+
+@author Tri Kurniawan Wijaya <tri-kurniawan.wijaya@epfl.ch>
+@date Thu 09 Oct 2014 10:40:33 AM CEST 
+
+How to run
+==========
+$ java -jar AnomalyDetection.jar -h
+
+Note
+====
+If, for some reason, you would like to regenerate the jar file:
+1. compile the source code (we assume the *.class file are in bin directory)
+2. unzip lib/commons-cli-1.2.jar
+3. move the resulting org directory to bin directory
+4. run: 
+   $ ./gen-AnomalyDetectionJAR.sh
+
