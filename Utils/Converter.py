@@ -6,7 +6,7 @@ and also extracting statistics from data files
 """
 
 import pickle
-import LookupTable
+import StateFinder.LookupTable
 
 
 class FromCSV:
