@@ -13,3 +13,4 @@ python needs the following additonal packages:
  - numpy (1.7.1)
  - scipy (0.12)
  - argparse (1.2.1)
+ - python-Levenshtein (0.11.2)
