@@ -138,9 +138,9 @@ def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid,
     """
     batch process using spclust symbolization
     """
-    call(["java", "-jar", "../Spclust/WvComputeModel.jar", "../datasets/"+dataset+"/"+inputfile,
+    call(["java", "-jar", "../Spclust/SpComputeModel.jar", "../datasets/"+dataset+"/"+inputfile,
           dimensions, wgrid, wnbr, "../outputs/"+dataset+"/"+outputname+"-model.spc"])
-    call(["java", "-jar", "../Spclust/WvComputeSymbols.jar", "../outputs/"+dataset+"/"+outputname+"-model.spc",
+    call(["java", "-jar", "../Spclust/SpComputeSymbols.jar", "../outputs/"+dataset+"/"+outputname+"-model.spc",
           "../datasets/"+dataset+"/"+inputfile, "../outputs/"+dataset+"/"+outputname+"-symbol.csv"])
     nbclusters = int(open("../outputs/"+dataset+"/"+outputname+"-model.spcn",'r').readline())
 
