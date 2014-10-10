@@ -100,12 +100,19 @@ def get_distance(file0, file1, rate):
     print "normalized-distance (d/l) = %f"%(dist[0]*1.0/dist[1])
 
 
-def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, ethreshold, mindist):
+def find_states(inputfile, outputname, rate, smethod, snbr, ememory, ethreshold, mindist):
     """
     batch process using standard symbolization
+    - input csv file with triple (time start, time end, value)
+    - base name for output files (can include a folder)
+    - sampling rate of the input time series
+    - symbolization method (0:unifom, 1:median, 2:distinct median)
+    - number of symbols to generates
+    - StateFinder fading factor
+    - StateFinder prediciton error threshold
+    - StateFinder min distance for clustering segments (0-1)
     """
-    src = ds.FileDataSource("./datasets/"+dataset+"/"+inputfile,
-                            "./outputs/"+dataset+"/"+outputname+"-statefinder.csv")
+    src = ds.FileDataSource(inputfile, outputname+"-statefinder.csv")
     src.load()
     enc = sbz.UniformSymbolizer()
     if smethod == "1":
@@ -120,46 +127,53 @@ def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, et
     clu = pr.ClusterSparseProcess(mindist, int(snbr)+1)
 
     src.data = sym.batch_process(src.data)
-    src.save_to("./outputs/"+dataset+"/"+outputname+"-symbol.csv")
+    src.save_to(outputname+"-symbol.csv")
     src.data = rel.batch_process(src.data)
-    src.save_to("./outputs/"+dataset+"/"+outputname+"-rle.csv")
+    src.save_to(outputname+"-rle.csv")
     segments = sem.batch_process(src.data)
     (src.data, lookup) = clu.batch_process(segments, src.data)
     src.save()
     lookups = {0:lt.SymbolLookupTable(sep, mini, maxi),
                1:lt.ExpandLookupTable(rate),
                2:(lt.ClusterSparseLookupTable(lookup, rate))}
-    lkf = open("./outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
+    lkf = open(outputname+"-model.mdl", 'w')
     pickle.dump(lookups, lkf)
     lkf.close()
 
 
-def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid, wnbr, ememory, ethreshold, mindist):
+def find_states_spclust(inputfile, outputname, rate, dimensions, wgrid, wnbr, ememory, ethreshold, mindist):
     """
     batch process using spclust symbolization
+    - input csv file with triple (time start, time end, values)
+    - base name for output files (can include a folder)
+    - sampling rate of the input time series
+    - number of dimensions of the input time series
+    - Spclust grid size
+    - Spclust count threshold
+    - StateFinder fading factor
+    - StateFinder prediciton error threshold
+    - StateFinder min distance for clustering segments (0-1)
     """
-    call(["java", "-jar", "./Spclust/SpComputeModel.jar", "./datasets/"+dataset+"/"+inputfile,
-          dimensions, wgrid, wnbr, "./outputs/"+dataset+"/"+outputname+"-model.spc"])
-    call(["java", "-jar", "./Spclust/SpComputeSymbols.jar", "./outputs/"+dataset+"/"+outputname+"-model.spc",
-          "./datasets/"+dataset+"/"+inputfile, "./outputs/"+dataset+"/"+outputname+"-symbol.csv"])
-    nbclusters = int(open("./outputs/"+dataset+"/"+outputname+"-model.spcn",'r').readline())
-
-    src = ds.FileDataSource("./outputs/"+dataset+"/"+outputname+"-symbol.csv",
-                            "./outputs/"+dataset+"/"+outputname+"-statefinder.csv")
+    call(["java", "-jar", "./Spclust/SpComputeModel.jar", inputfile,
+          dimensions, wgrid, wnbr, outputname+"-model.spc"])
+    call(["java", "-jar", "./Spclust/SpComputeSymbols.jar",
+          outputname+"-model.spc", inputfile, outputname+"-symbol.csv"])
+    nbclusters = int(open(outputname+"-model.spcn", 'r').readline())
+    src = ds.FileDataSource(outputname+"-symbol.csv", outputname+"-statefinder.csv")
     rel = pr.RLEProcess()
     sem = pr.SegmentSparseProcess(rate, ethreshold, ememory)
     clu = pr.ClusterSparseProcess(mindist, nbclusters)
     src.load()
     src.data = rel.batch_process(src.data)
-    src.save_to("./outputs/"+dataset+"/"+outputname+"-rle.csv")
+    src.save_to(outputname+"-rle.csv")
     src.data = rel.batch_process(src.data)
     segments = sem.batch_process(src.data)
     (src.data, lookup) = clu.batch_process(segments, src.data)
     src.save()
-    lookups = {0:lt.SpclustSymbolLookupTable("./outputs/"+dataset+"/"+outputname+"-model.spc"),
+    lookups = {0:lt.SpclustSymbolLookupTable(outputname+"-model.spc"),
                1:lt.ExpandLookupTable(rate),
                2:(lt.ClusterSparseLookupTable(lookup, rate))}
-    lkf = open("./outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
+    lkf = open(outputname+"-model.mdl", 'w')
     pickle.dump(lookups, lkf)
     lkf.close()
 

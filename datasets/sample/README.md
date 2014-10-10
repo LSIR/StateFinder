@@ -1,2 +1,0 @@
-The files here are given as example to test the functionalities of StateFinder and Spclust.
-You can test on your own datasets by adding subfolders to the "dataset" folder and use the same naming convention for the input files and formats.
