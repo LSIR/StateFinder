@@ -145,7 +145,7 @@ def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid,
     nbclusters = int(open("./outputs/"+dataset+"/"+outputname+"-model.spcn",'r').readline())
 
     src = ds.FileDataSource("./outputs/"+dataset+"/"+outputname+"-symbol.csv",
-                            "./outputs/"+dataset+"/"+outputname+"-statecluster.csv")
+                            "./outputs/"+dataset+"/"+outputname+"-statefinder.csv")
     rel = pr.RLEProcess()
     sem = pr.SegmentSparseProcess(rate, ethreshold, ememory)
     clu = pr.ClusterSparseProcess(mindist, nbclusters)
