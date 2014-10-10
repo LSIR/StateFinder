@@ -104,8 +104,8 @@ def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, et
     """
     batch process using standard symbolization
     """
-    src = ds.FileDataSource("../datasets/"+dataset+"/"+inputfile,
-                            "../outputs/"+dataset+"/"+outputname+"-statefinder.csv")
+    src = ds.FileDataSource("./datasets/"+dataset+"/"+inputfile,
+                            "./outputs/"+dataset+"/"+outputname+"-statefinder.csv")
     src.load()
     enc = sbz.UniformSymbolizer()
     if smethod == "1":
@@ -120,16 +120,16 @@ def find_states(dataset, inputfile, outputname, rate, smethod, snbr, ememory, et
     clu = pr.ClusterSparseProcess(mindist, int(snbr)+1)
 
     src.data = sym.batch_process(src.data)
-    src.save_to("../outputs/"+dataset+"/"+outputname+"-symbol.csv")
+    src.save_to("./outputs/"+dataset+"/"+outputname+"-symbol.csv")
     src.data = rel.batch_process(src.data)
-    src.save_to("../outputs/"+dataset+"/"+outputname+"-rle.csv")
+    src.save_to("./outputs/"+dataset+"/"+outputname+"-rle.csv")
     segments = sem.batch_process(src.data)
     (src.data, lookup) = clu.batch_process(segments, src.data)
     src.save()
     lookups = {0:lt.SymbolLookupTable(sep, mini, maxi),
                1:lt.ExpandLookupTable(rate),
                2:(lt.ClusterSparseLookupTable(lookup, rate))}
-    lkf = open("../outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
+    lkf = open("./outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
     pickle.dump(lookups, lkf)
     lkf.close()
 
@@ -138,28 +138,28 @@ def find_states_spclust(dataset, inputfile, outputname, rate, dimensions, wgrid,
     """
     batch process using spclust symbolization
     """
-    call(["java", "-jar", "../Spclust/SpComputeModel.jar", "../datasets/"+dataset+"/"+inputfile,
-          dimensions, wgrid, wnbr, "../outputs/"+dataset+"/"+outputname+"-model.spc"])
-    call(["java", "-jar", "../Spclust/SpComputeSymbols.jar", "../outputs/"+dataset+"/"+outputname+"-model.spc",
-          "../datasets/"+dataset+"/"+inputfile, "../outputs/"+dataset+"/"+outputname+"-symbol.csv"])
-    nbclusters = int(open("../outputs/"+dataset+"/"+outputname+"-model.spcn",'r').readline())
+    call(["java", "-jar", "./Spclust/SpComputeModel.jar", "./datasets/"+dataset+"/"+inputfile,
+          dimensions, wgrid, wnbr, "./outputs/"+dataset+"/"+outputname+"-model.spc"])
+    call(["java", "-jar", "./Spclust/SpComputeSymbols.jar", "./outputs/"+dataset+"/"+outputname+"-model.spc",
+          "./datasets/"+dataset+"/"+inputfile, "./outputs/"+dataset+"/"+outputname+"-symbol.csv"])
+    nbclusters = int(open("./outputs/"+dataset+"/"+outputname+"-model.spcn",'r').readline())
 
-    src = ds.FileDataSource("../outputs/"+dataset+"/"+outputname+"-symbol.csv",
-                            "../outputs/"+dataset+"/"+outputname+"-statecluster.csv")
+    src = ds.FileDataSource("./outputs/"+dataset+"/"+outputname+"-symbol.csv",
+                            "./outputs/"+dataset+"/"+outputname+"-statecluster.csv")
     rel = pr.RLEProcess()
     sem = pr.SegmentSparseProcess(rate, ethreshold, ememory)
     clu = pr.ClusterSparseProcess(mindist, nbclusters)
     src.load()
     src.data = rel.batch_process(src.data)
-    src.save_to("../outputs/"+dataset+"/"+outputname+"-rle.csv")
+    src.save_to("./outputs/"+dataset+"/"+outputname+"-rle.csv")
     src.data = rel.batch_process(src.data)
     segments = sem.batch_process(src.data)
     (src.data, lookup) = clu.batch_process(segments, src.data)
     src.save()
-    lookups = {0:lt.SpclustSymbolLookupTable("../outputs/"+dataset+"/"+outputname+"-model.spc"),
+    lookups = {0:lt.SpclustSymbolLookupTable("./outputs/"+dataset+"/"+outputname+"-model.spc"),
                1:lt.ExpandLookupTable(rate),
                2:(lt.ClusterSparseLookupTable(lookup, rate))}
-    lkf = open("../outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
+    lkf = open("./outputs/"+dataset+"/"+outputname+"-model.mdl", 'w')
     pickle.dump(lookups, lkf)
     lkf.close()
 
