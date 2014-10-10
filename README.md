@@ -18,12 +18,12 @@ python needs the following additonal packages:
 Running
 --------
 
-To run StateFinder on the sample dataset given in Statefinder/input-example/data.csv
+To run StateFinder on some dataset data.csv
 
 
 ```shell
 
-python Executable.py find_states_spclust input-example/data.csv data 1 1 20 10 0.9 0.9 0.2
+python Executable.py find_states_spclust data.csv data 1 1 20 10 0.9 0.9 0.2
 
 ```
 
