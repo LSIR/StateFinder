@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# Before running the script: 
-# 1 Compile the source file, we assume the *.class files are in bin directory
-# 2 unzip lib/commons-cli-1.2.jar
-# 3 move the resulting org directory to bin directory
+# preparation
+cd lib
+dir=org/apache
+if [ ! -d "$dir" ]; then
+	unzip -o commons-cli-1.2.jar
+fi
+cp -r org ../bin
+cd ..
 
 # go to bin directory
 cd bin
@@ -11,6 +15,7 @@ cd bin
 # create jar for AnomalyDetection.jar
 echo Main-class: ch.epfl.lsir.anomaly.AnomalyDetection > manifest.txt
 jar cvfm AnomalyDetection.jar manifest.txt ch/epfl/lsir/anomaly org/apache
+rm manifest.txt
 
 # go to main project directory
 cd ..
