@@ -1,0 +1,16 @@
+@brief README for directory pattern-based-forecasting
+@author Tri Kurniawan Wijaya <tri-kurniawan.wijaya@epfl.ch>
+@date Sat 11 Oct 2014 08:58:18 AM CEST 
+
+How to run
+==========
+for help: $ java -jar Forecast.jar -h
+example: java -jar Forecast.jar -o output.txt input-example 2 0.2 3
+
+Note
+====
+If, for some reason, you would like to regenerate the jar file:
+1. compile the source code (we assume the *.class file are in bin directory)
+2. run:   
+   $ ./gen-ForecastJAR.sh
+
