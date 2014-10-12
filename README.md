@@ -23,7 +23,7 @@ To run StateFinder on some dataset data.csv
 
 ```shell
 
-python Executable.py find_states_spclust data.csv data 1 1 20 10 0.9 0.9 0.2
+python Executable.py find_states_spclust data.csv data 1 1 50 10 0.9 0.9 0.2
 
 ```
 
