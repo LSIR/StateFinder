@@ -23,7 +23,7 @@ class SpclustSymbolLookupTable:
             tmpf.write("1,%d\n"%(int(float(sym[2]))))
         tmpf.close()
         try:
-            call(["java", "-jar", "../WaveCluster/WvGetRaw.jar", self.model,
+            call(["java", "-jar", "../SpClust/WvGetRaw.jar", self.model,
                   'temp'+str(rnd)+'.sym', 'temp'+str(rnd)+'.real'])
         except Exception as exp:
             print exp
