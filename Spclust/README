@@ -1,0 +1,41 @@
+@brief This is a README file for Spclust code.
+@author Tri Kurniawan Wijaya <tri-kurniawan.wijaya@epfl.ch>
+@date Tue 14 Oct 2014 09:52:39 AM CEST 
+
+
+Spclust is also used in the process to find states. See ../README.md and ../Workflow.py
+
+Running Spclust by itself
+=========================
+1. Compute the model. 
+   For help:
+     $ java -jar SpComputeModel.jar -h  
+   Example:
+     $ java -jar SpComputeModel.jar input-raw.txt 2 25 2 model.sp
+     Note: 
+     - There is actually 'input-raw.txt' (as an example input file) in the same directory as this README file.
+     - The model is stored in 'model.sp'. You will need it later for step (2)
+
+2. Compute the symbol (use the file 'model.sp' from step (1) above
+   For help:
+     $ java -jar SpComputeSymbols.jar -h
+   Example: 
+     $ java -jar SpComputeSymbols.jar model.sp testing-raw.txt sym.txt
+     Note: 
+     - There is actually 'testing-raw.txt' (as an example testing file) in the same directory as this README file.
+     - The result is stored in sym.txt
+
+3. (optional) Just in case you need to convert the symbolic file to domain of the original values. 
+   Using example from step (2) above, this means converting 'sym.txt' to the domain of 'testing-raw.txt' and 'input-raw.txt'
+   Note that this conversion is lossy.
+   For help:
+     $ java -jar SpGetRaw.jar -h
+   Example:
+     $ java -jar SpGetRaw.jar model.sp sym.txt raw-centroids.txt
+   Note: 
+     - File 'model.sp' is obtained from step (1)
+     - File 'sym.txt' is obtained from step (2)
+     - The result is stored in raw-centroids.txt
+  
+
+End README
